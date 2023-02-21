@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "snabbdom": "^3.5.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "name": "study_snabbdom",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev":"webpack serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
