@@ -22,6 +22,7 @@ export function h(sel, data, children) {
     }
 
     if (IsArray(children)) {
+       
         for (let item of children) {
             if (!(IsObject(item) &&
                 item.hasOwnProperty("sel") &&

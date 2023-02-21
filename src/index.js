@@ -1,20 +1,18 @@
 import { h } from "./my_snabbdom/h";
 import patch from "./my_snabbdom/patch";
 
-const container = document.getElementById("container");
-const myVnode = h("ol", {}, [
-    h("li", {}, "diff"),
-    h("li", {}, "patch"),
-    h("li", {}, "end")
-]);
-console.log(myVnode);
-patch(container, myVnode);
+let content = document.getElementById("container");
 
-const patchBtn = document.getElementById("patchBtn");
-const myVnode2 = h("h2", {}, [
+let myVnode = h("h2", {}, "我是H2");
+
+patch(content, myVnode);
+
+let patchBtn = document.getElementById("patchBtn");
+
+let myVnode2 = h("h2", {}, [
     h("p", {}, "halo word!"),
     h("p", {}, "哈利波特！"),
-])
+]);
 window.patchHandle = function() {
     patch(myVnode, myVnode2);
 }
