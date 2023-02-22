@@ -9,10 +9,7 @@ patch(content, myVnode);
 
 let patchBtn = document.getElementById("patchBtn");
 
-let myVnode2 = h("h2", {}, [
-    h("p", {}, "halo word!"),
-    h("p", {}, "哈利波特！"),
-]);
+let myVnode2 = h("h2", {}, "猪猪");
 window.patchHandle = function() {
     patch(myVnode, myVnode2);
 }

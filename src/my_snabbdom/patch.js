@@ -1,5 +1,5 @@
 import { vnode } from "./vnode";
-import { IsArray, IsElm, IsString } from "./is";
+import { IsArray, IsElm, IsString, IsUndefined, HasArray } from "./is";
 import { createElm } from "./elm";
 /**
  * @typedef VNODE
@@ -20,34 +20,45 @@ import { createElm } from "./elm";
  * @returns {any}
  */
 function patchVnode(OldVnode, NewVnode) {
+    // 新旧节点内存一致
+    // patch(myVnode1, myVnode1) 
+    // 基本不会出现
     if (OldVnode.elm === NewVnode.elm) return;
-    if (IsString(NewVnode.text)) {
-        if (IsString(OldVnode.text) && NewVnode.text !== OldVnode.text) {
+
+    // 新节点为文本节点，并且新节点文本与旧节点文本不一致
+    /*
+    OldVnode = h("h2", {}, [ h("p", {}, "halo") ])
+    NewVnode = h("h2", {}, "新节点")
+    patch(OldVnode, NewVnode)
+    */
+    if (IsString(NewVnode.text) && (IsUndefined(NewVnode.children) || NewVnode.children.length === 0)) {
+        if (NewVnode.text !== OldVnode.text) {
             // 如果新旧节点都有文本节点，并且不同意的话
-            OldVnode.elm.innerText = NewVnode.elm.innerText;
+            OldVnode.elm.innerText = NewVnode.text;
             OldVnode.text = NewVnode.text;
         }
-
     } else {
-        // 新虚拟DOM有children
-        if (IsArray(OldVnode.children) && OldVnode.children.length) {
+        // 新节点有children
+        if (HasArray(OldVnode.children)) {
             // diff
-        }else{
-            console.log(OldVnode, NewVnode);
-            // 旧虚拟DOM没有children，有text 
-            // 清除旧虚拟DOM text
+        } else {
+            // 旧节点没有children，有text 
+            // 清除旧节点 text
             OldVnode.text = "";
             OldVnode.elm.innerText = "";
-            // 设置旧虚拟DOM的children 为 新虚拟DOM的children
+            // 设置旧节点的children 为新节点的children
+            /*
+                OldVnode = h("h2", {}, "新节点")
+                NewVnode = h("h2", {}, [ h("p", {}, "halo") ])
+                patch(OldVnode, NewVnode)           
+            */
             OldVnode.children = [];
             for (let index = 0; index < NewVnode.children.length; index++) {
                 OldVnode.children.push(NewVnode.children[index]);
-                OldVnode.elm.appendChild(NewVnode.elm.children[0]);
+                OldVnode.elm.appendChild(createElm(NewVnode.children[index]));
             }
         }
     }
-
-
 }
 
 /**
@@ -67,7 +78,7 @@ export default function (OldVnode, NewVnode) {
     } else if (0) {
         // 如果是 DomFrament
     }
-    
+
     if (OldVnode.key === NewVnode.key && OldVnode.sel === NewVnode.sel) {
         // 如果是同一个节点 diff
         console.log("（是）同一个节点 OldVnode和NewVnode");
