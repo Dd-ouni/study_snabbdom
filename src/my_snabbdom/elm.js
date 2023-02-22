@@ -1,18 +1,11 @@
 import { IsString, IsArray } from "./is";
 
-/**
- * @typedef VNODE
- * @property { string } sel
- * @property { symbol | string | undefined } key
- * @property { Element | undefined } elm
- * @property { string | undefined } text
- * @property { VNODE[] | undefined } children
- */
+
 
 /**
  * Vnode 递归创建孤儿节点
  * @date 2023-02-21
- * @param {VNODE} Vnode
+ * @param {import("./patch").VNODE} Vnode
  * @returns {Element}
  */
 export function createElm(Vnode) {
