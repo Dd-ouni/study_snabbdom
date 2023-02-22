@@ -7,7 +7,7 @@ export function vnode(sel, data, children, text, delElm) {
             children,
             text,
             elm: delElm,
-            key: undefined
+            key: data.key
         }
     }
 
@@ -29,7 +29,7 @@ export function vnode(sel, data, children, text, delElm) {
         children,
         text,
         elm,
-        key: undefined
+        key: data.key
     };
 }
 

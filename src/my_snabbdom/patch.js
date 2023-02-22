@@ -11,6 +11,39 @@ import { createElm } from "./elm";
  * @property { Object<string, any> } data
  */
 
+const diff_record = (function() {
+    let p_record = [
+        ["轮数", "命中信息", "命中操作"]
+    ];
+
+    /**
+     * @typedef DIFF_RECORD
+     * @property {number} count
+     * @property {string} hit_des
+     * @property {string} hit_handle
+     */
+    
+    /**
+     * add
+     * @date 2023-02-22
+     * @param {DIFF_RECORD} record
+     * @returns {any}
+     */
+    function add(record) {
+        p_record.push([ record.count, record.hit_des, record.hit_handle ]);
+    }
+
+    function log() {
+        console.table(p_record);
+        
+    }
+
+    return {
+        add,
+        log
+    }
+})()
+
 
 /**
  * 描述
@@ -40,7 +73,69 @@ function patchVnode(OldVnode, NewVnode) {
     } else {
         // 新节点有children
         if (HasArray(OldVnode.children)) {
-            // diff
+            // 四命中算法
+            /*
+                1. 旧前新前
+                2. 旧后新后
+                3. 新后旧前
+                4. 新前旧后
+            */
+            let 
+                OldBefore = 0, 
+                OldAfter = OldVnode.children.length - 1, 
+                NewBefore = 0, 
+                NewAfter = NewVnode.children.length - 1,
+                LoopCount = 0;
+            // 低配版 key 不存在是 undefined
+            while(OldBefore <= OldAfter && NewBefore <= NewAfter) {
+                LoopCount++;
+                // debugger;
+                if(OldVnode.children[OldBefore].key === NewVnode.children[NewBefore].key ) {
+                    OldBefore += 1;
+                    NewBefore += 1;
+                    diff_record.add({count: LoopCount, hit_des: "1.旧前新前", hit_handle: `旧前新前指针下移 OldBefore+1=${OldBefore} NewBefore+1=${NewBefore}`});
+                    continue;
+                }
+                // debugger;
+                if(OldVnode.children[OldAfter].key === NewVnode.children[NewAfter].key) {
+                    diff_record.add({count: LoopCount, hit_des: "2.旧后新后", hit_handle: `旧后新后指针上移动`});
+                    OldAfter -= 1;
+                    NewAfter -= 1;
+                    continue;
+                }
+                if(NewVnode.children[NewAfter].key === OldVnode.children[OldBefore].key) {
+                    diff_record.add({count: LoopCount, hit_des: "3.新后旧前", hit_handle: ``});
+                    // 移动方案
+                    debugger
+                    continue;
+                }
+                if(OldVnode.children[OldBefore].key === NewVnode.children[NewAfter].key) {
+                    diff_record.add({count: LoopCount, hit_des: "4.旧前新后", hit_handle: ``});
+                    // 移动方案
+                    debugger
+                    continue;
+                }
+                // 没有命中，循环查找节点
+                debugger;
+            }
+            // debugger;
+            if(OldBefore > OldAfter) {
+                // 旧先结束，说明增加
+                for(; OldBefore <= NewAfter; OldBefore++){
+                    OldVnode.children.push(NewVnode.children[OldBefore]);
+                    OldVnode.elm.appendChild(createElm(NewVnode.children[OldBefore]));
+                }
+                
+            }
+            if(NewBefore > NewAfter) {
+                // 新先结束，说明减少
+                for(; OldAfter >= NewBefore ; OldAfter--){
+                    OldVnode.elm.removeChild(OldVnode.elm.children[OldAfter]);
+                    OldVnode.children.pop();
+                }
+            }
+
+            diff_record.log();
         } else {
             // 旧节点没有children，有text 
             // 清除旧节点 text
