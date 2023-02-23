@@ -27,9 +27,9 @@ export function patchVnode(OldVnode, NewVnode) {
 
     // 新节点为文本节点，并且新节点文本与旧节点文本不一致
     /*
-    OldVnode = h("h2", {}, [ h("p", {}, "halo") ])
-    NewVnode = h("h2", {}, "新节点")
-    patch(OldVnode, NewVnode)
+        OldVnode = h("h2", {}, [ h("p", {}, "halo") ])
+        NewVnode = h("h2", {}, "新节点")
+        patch(OldVnode, NewVnode)
     */
     if (IsString(NewVnode.text) && (IsUndefined(NewVnode.children) || NewVnode.children.length === 0)) {
         if (NewVnode.text !== OldVnode.text) {

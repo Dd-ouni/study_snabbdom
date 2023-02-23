@@ -33,9 +33,6 @@ const diff_record = (function () {
     }
 })()
 
-
-
-
 /**
  * updateChildren
  * @date 2023-02-22
@@ -87,11 +84,8 @@ export function updateChildren(ParentElm, OldChildren, NewChildren) {
             */
             patchVnode(OldStartVnode, NewEndVnode);
            
-            if(OldEndVnode.elm.nextSibling) {
-                ParentElm.insertBefore(OldStartVnode.elm, OldEndVnode.elm.nextSibling);
-            }else{
-                ParentElm.appendChild(OldStartVnode.elm);
-            }
+            // OldEndVnode.elm.nextSibling 可能是null， insertBefore第二参数null，就是尾插
+            ParentElm.insertBefore(OldStartVnode.elm, OldEndVnode.elm.nextSibling);
        
             NewEndVnode = NewChildren[--NewEndPos];
             OldStartVnode = OldChildren[++OldStartPos];
@@ -109,29 +103,35 @@ export function updateChildren(ParentElm, OldChildren, NewChildren) {
             OldEndVnode = OldChildren[++OldEndPos];
             NewStartVnode = NewChildren[--NewStartPos];
             diff_record.add({ count: LoopCount, hit_des: "4.旧前新后", hit_handle: `` });
+        }else{
+            // 没有命中，循环查找节点
         }
-        // 没有命中，循环查找节点
+        
 
         if (LoopCount > (OldChildren.length > NewChildren.length ? OldChildren.length : NewChildren.length) * 2) {
             throw "死循环"
         }
     }
 
-    // if (OldStartPos > OldEndPos) {
-    //     // 旧先结束，说明增加
-    //     for (; OldStartPos <= NewEndPos; OldStartPos++) {
-    //         OldChildren.push(NewChildren[OldStartPos]);
-    //         ParentElm.appendChild(createElm(NewChildren[OldStartPos]));
-    //     }
 
-    // }
-    // if (NewStartPos > NewEndPos) {
-    //     // 新先结束，说明减少
-    //     for (; OldEndPos >= NewStartPos; OldEndPos--) {
-    //         ParentElm.removeChild(ParentElm.children[OldEndPos]);
-    //         OldChildren.pop();
-    //     }
-    // }
+    // 4命中之后新增和删除的情况
+    
+    if(NewStartPos < NewEndPos) {
+        // 新增
+        for (let index = NewStartPos; index <= NewEndPos; index++) {
+            OldChildren[index] = NewChildren[index];
+            ParentElm.appendChild(createElm(NewChildren[index]));    
+        }
+
+    }else if(OldStartPos < OldEndPos) {
+        // 删除
+        console.log("删除的情况");
+        for (let index = OldStartPos; index <= OldEndPos; index++) {
+            ParentElm.removeChild(OldChildren[index].elm);
+            OldChildren[index] = undefined;
+        }
+        console.log(ParentElm, OldChildren);
+    }
 
     diff_record.log();
 }
