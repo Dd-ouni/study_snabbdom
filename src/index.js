@@ -4,13 +4,9 @@ import { patch } from "./my_snabbdom/patch";
 let content = document.getElementById("container");
 
 let myVnode = h("ul", {}, [
-    h("li", { key: "A" }, "AAAAAA"), 
-    h("li", { key: "B" }, "B"), 
-    h("li", { key: "C" }, "CC"), 
-    h("li", { key: "D" }, "D"), 
-    h("li", { key: "E" }, "E"), 
-
-
+    h("li", { key: "A" }, "AA"), 
+    h("li", { key: "B" }, "B2"), 
+    h("li", { key: "C" }, "C3"),  
 ]);
 
 patch(content, myVnode);
@@ -21,6 +17,8 @@ let myVnode2 = h("ul", {}, [
     h("li", { key: "A" }, "A"), 
     h("li", { key: "B" }, "B"), 
     h("li", { key: "C" }, "C"), 
+    h("li", { key: "D" }, "D"), 
+    h("li", { key: "E" }, "E"), 
 ]);
 window.patchHandle = function() {
     patch(myVnode, myVnode2);
